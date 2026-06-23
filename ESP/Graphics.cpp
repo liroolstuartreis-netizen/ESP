@@ -28,18 +28,20 @@ bool InitializeDirectX(HWND hwnd) {
     OutputDebugStringA("DXGI factory created successfully.\n");
 
     DXGI_SWAP_CHAIN_DESC sd = {};
-    sd.BufferCount = 1;
+    sd.BufferCount = 2;
+    sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
     sd.BufferDesc.Width = 0;
     sd.BufferDesc.Height = 0;
     sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     sd.BufferDesc.RefreshRate.Numerator = 60;
     sd.BufferDesc.RefreshRate.Denominator = 1;
-    sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+    sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     sd.OutputWindow = hwnd;
     sd.SampleDesc.Count = 1;
     sd.SampleDesc.Quality = 0;
     sd.Windowed = TRUE;
+    sd.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED; // Para transparência adequada
 
     hr = pFactory->CreateSwapChain(g_pd3dDevice, &sd, &g_pSwapChain);
     pFactory->Release();

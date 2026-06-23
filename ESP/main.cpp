@@ -69,6 +69,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     std::cout << "Successfully opened DayZ process.\n";
 
+    // IMPORTANT: This external ESP will likely not work with BattlEye enabled.
+    // Circumventing BattlEye requires advanced techniques, such as kernel-mode drivers,
+    // which are beyond the scope of this project and current environment.
+    // Users should be aware of this limitation.
+
     uintptr_t gameBaseAddress = memory::get_module_base_address(processId, "DayZ_x64.exe");
     if (gameBaseAddress == 0) {
         std::cerr << "Failed to find the base address of DayZ.\n";
@@ -92,6 +97,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             DispatchMessage(&msg);
             if (msg.message == WM_QUIT)
                 break;
+        }
+
+        // Ensure overlay is always on top of the game window
+        HWND gameHwnd = FindWindow(NULL, L"DayZ"); // Replace "DayZ" with the actual window title of the game
+        if (gameHwnd) {
+            SetWindowPos(hwnd, gameHwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         }
 
         if (GetAsyncKeyState(VK_NUMPAD1) & 0x8000) {

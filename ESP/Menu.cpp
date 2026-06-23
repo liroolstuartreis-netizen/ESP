@@ -1,9 +1,14 @@
 #include "Menu.h"
 #include <iostream>
+#include <dwmapi.h>
+#pragma comment(lib, "dwmapi.lib")
 
 void SetWindowTransparency(HWND hwnd) {
-    SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_TRANSPARENT);
-    SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 0, LWA_COLORKEY);
+    SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW);
+    
+    // Modern approach using DWM for better performance and true alpha blending
+    MARGINS margins = { -1, -1, -1, -1 };
+    DwmExtendFrameIntoClientArea(hwnd, &margins);
 }
 
 HWND CreateOverlayWindow(HINSTANCE hInstance, const wchar_t* className, int nCmdShow) {
